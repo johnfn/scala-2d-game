@@ -21,7 +21,7 @@ object Main{
 
   var finished = false
   
-  def initializeGfx() = {
+  def initializeMap() = {
 	  map = new Map(0, 0, width / 20, height / 20)
   }
 
@@ -238,7 +238,7 @@ object Main{
     }
 
     init(fullscreen)
-    run
+    run()
     gameOver()
   }
 
@@ -253,7 +253,7 @@ object Main{
     //glEnable(GL_LIGHTING)
     //glEnable(GL_LIGHT0)    
 
-    initializeGfx();
+    initializeMap();
     
     manager.add(player)
     manager.add(map)

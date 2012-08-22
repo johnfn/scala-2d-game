@@ -11,6 +11,6 @@ class Camera(x:Int, y:Int, width:Int, height:Int) {
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    glViewport(x, y, width, height)
+    glViewport(-x, y, width, height)
   }
 }

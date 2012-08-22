@@ -25,29 +25,21 @@ import org.lwjgl.opengl.GL11;
 class TextureLoader {
 	import scala.collection.mutable.Map;
 	
-    /** The table of textures that have been loaded in this loader */
-    var table:Map[String, Texture] = Map();
 
-    /** The color model including alpha for the GL image */
-    var glAlphaColorModel:ColorModel = null;
-    
-    /** The color model for the GL image */
-    var glColorModel:ColorModel = null;
-    
     /** 
      * Create a new texture loader based on the game panel
      *
      * @param gl The GL content in which the textures should be loaded
      */
     
-    glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+    var glAlphaColorModel:ColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
                                         Array(8, 8, 8, 8),
                                         true,
                                         false,
                                         java.awt.Transparency.TRANSLUCENT,
                                         DataBuffer.TYPE_BYTE);
     
-    glColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+    var glColorModel:ColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
                                         Array(8, 8, 8, 8),
                                         false,
                                         false,
@@ -77,17 +69,7 @@ class TextureLoader {
      * @throws IOException Indicates a failure to access the resource
      */
     def getTexture(resourceName:String, x:Int = -1, y:Int = -1, width:Int = -1, height:Int = -1):Texture = {
-      table.get(resourceName) match {
-        case Some(texture) => return texture;        
-        
-        case None => {
-	        val tex = loadTexture(resourceName, x, y, width, height);
-	        
-	        table(resourceName) = tex;
-	        return tex;
-        }
-
-      }
+        return loadTexture(resourceName, x, y, width, height);
     }
     
     /**
@@ -206,7 +188,7 @@ class TextureLoader {
             raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,3,null);
             texImage = new BufferedImage(glColorModel,raster,false,new Hashtable());
         }
-            
+
         // copy the source image into the produced image
 
         var g:Graphics = texImage.getGraphics();

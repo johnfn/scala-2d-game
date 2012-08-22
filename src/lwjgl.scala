@@ -120,14 +120,11 @@ object Main{
     override def update(m:Manager) = {}
 
     override def render = {
-      glColor3f(0.0f, 1.0f, 1.0f)
-      glEnable(GL_TEXTURE_2D);
-      //texture.bind();
+      glColor3f(1.0f, 1.0f, 1.0f)
       
-      ss.bind(1, 1);
+      ss.bind(1, 0);
       
       glBegin(GL_QUADS)
-      /*
   	      glTexCoord2f(0, 0);
 	      glVertex2f(0, 0);
 	      glTexCoord2f(0, texture.getWidth());
@@ -135,15 +132,6 @@ object Main{
 	      glTexCoord2f(texture.getWidth(), texture.getWidth());
 	      glVertex2f(width,height);
 	      glTexCoord2f(texture.getWidth(), 0);
-	      glVertex2f(width,0);
-	      */
-  	      glTexCoord2f(0, 0);
-	      glVertex2f(0, 0);
-	      glTexCoord2f(0, ss.tileSize);
-	      glVertex2f(0, height);
-	      glTexCoord2f(ss.tileSize, ss.tileSize);
-	      glVertex2f(width,height);
-	      glTexCoord2f(ss.tileSize, 0);
 	      glVertex2f(width,0);
       glEnd()
     }
@@ -263,6 +251,8 @@ object Main{
     Display.setVSyncEnabled(true)
     Display.setDisplayMode(new DisplayMode(width,height))
     Display.create()
+    
+    glEnable(GL_TEXTURE_2D);
   }
 
   def init(fullscreen:Boolean){

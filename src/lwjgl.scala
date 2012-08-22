@@ -11,12 +11,18 @@ object Main{
   val FRAMERATE = 60
   val width = 640
   val height = 480
+  
+  var texLoader:TextureLoader = new TextureLoader();
 
   val player = new Player(100, 100, 20, 20)
-  val map = new Map(0, 0, width / 20, height / 20)
+  var map:Map = null;
   val manager = new Manager()
 
   var finished = false
+  
+  def initializeGfx() = {
+	  map = new Map(0, 0, width / 20, height / 20)
+  }
 
   trait controllable extends Entity{
     def control() = {
@@ -105,15 +111,24 @@ object Main{
   }
 
   class Tile(x:Int, y:Int, width:Int, height:Int, t:Int) extends Entity(x, y, width, height) {
+    val texture:Texture = texLoader.getTexture("/Users/grantm/eclipse/scala-game/assets/derp.png");
+    
     override def update(m:Manager) = {}
 
     override def render = {
-      glColor3f(0.0f, t, 1.0f)
+      glColor3f(0.0f, 1.0f, 1.0f)
+      glEnable(GL_TEXTURE_2D);
+      texture.bind();
+      
       glBegin(GL_QUADS)
-      glVertex3f(0.0f, 0.0f, 0.0f)
-      glVertex3f(0.0f, height, 0.0f)
-      glVertex3f(width, height, 0.0f)
-      glVertex3f(width, 0.0f, 0.0f)
+  	      glTexCoord2f(0, 0);
+	      glVertex2f(0, 0);
+	      glTexCoord2f(0, texture.getHeight());
+	      glVertex2f(0, height);
+	      glTexCoord2f(texture.getWidth(), texture.getHeight());
+	      glVertex2f(width,height);
+	      glTexCoord2f(texture.getWidth(), 0);
+	      glVertex2f(width,0);
       glEnd()
     }
 
@@ -237,7 +252,8 @@ object Main{
     //glEnable(GL_LIGHTING)
     //glEnable(GL_LIGHT0)
     adjustcam
-
+    initializeGfx();
+    
     manager.add(player)
     manager.add(map)
   }

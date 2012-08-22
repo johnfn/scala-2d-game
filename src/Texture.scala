@@ -15,17 +15,17 @@ import org.lwjgl.opengl.GL11;
  */
 class Texture(target:Int, textureID:Int) {
     /** The height of the image */
-    var height:Int;
+    var height:Int = 20;
     /** The width of the image */
-    var width:Int;
+    var width:Int = 20;
     /** The width of the texture */
-    var texWidth:Int;
+    var texWidth:Int = 20;
     /** The height of the texture */
-    var texHeight:Int;
+    var texHeight:Int = 20;
     /** The ratio of the width of the image to the texture */
-    var widthRatio:Float;
+    var widthRatio:Float = 1.0f;
     /** The ratio of the height of the image to the texture */
-    var heightRatio:Float;
+    var heightRatio:Float = 1.0f;
 
     /**
      * Bind the specified GL context to a texture

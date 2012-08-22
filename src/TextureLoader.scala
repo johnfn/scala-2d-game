@@ -29,10 +29,10 @@ class TextureLoader {
     var table:Map[String, Texture] = Map();
 
     /** The color model including alpha for the GL image */
-    var glAlphaColorModel:ColorModel;
+    var glAlphaColorModel:ColorModel = null;
     
     /** The color model for the GL image */
-    var glColorModel:ColorModel;
+    var glColorModel:ColorModel = null;
     
     /** 
      * Create a new texture loader based on the game panel
@@ -73,24 +73,23 @@ class TextureLoader {
      * @throws IOException Indicates a failure to access the resource
      */
     def getTexture(resourceName:String):Texture = {
-        var tex:Texture = table(resourceName);
-        
-        if (tex != null) {
-            return tex;
+      table.get(resourceName) match {
+        case Some(texture) => {
+          return texture;
+        }        
+        case None => {
+	        val tex = getTexture(resourceName,
+	                         GL11.GL_TEXTURE_2D, // target
+	                         GL11.GL_RGBA,     // dst pixel format
+	                         GL11.GL_LINEAR, // min filter (unused)
+	                         GL11.GL_LINEAR);
+	        
+	        table(resourceName) = tex;
+	        
+	        return tex;
         }
-        
-        tex = getTexture(resourceName,
-                         GL11.GL_TEXTURE_2D, // target
 
-                         GL11.GL_RGBA,     // dst pixel format
-
-                         GL11.GL_LINEAR, // min filter (unused)
-
-                         GL11.GL_LINEAR);
-        
-        table(resourceName) = tex;
-        
-        return tex;
+      }
     }
     
     /**
@@ -120,6 +119,10 @@ class TextureLoader {
         var bufferedImage:BufferedImage = loadImage(resourceName); 
         texture.setWidth(bufferedImage.getWidth());
         texture.setHeight(bufferedImage.getHeight());
+        
+        println(bufferedImage.getWidth());
+        println(bufferedImage.getHeight());
+        println(bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null, 0, bufferedImage.getWidth())(0));
         
         if (bufferedImage.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;

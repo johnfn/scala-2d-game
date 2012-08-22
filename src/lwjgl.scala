@@ -15,7 +15,8 @@ object Main{
   var texLoader:TextureLoader = new TextureLoader();
 
   val player = new Player(100, 100, 20, 20)
-  var map:Map = null;
+  var cam:Camera = new Camera(0, 0, width, height);
+  var map:Map = null; // needs to be initialized after window is created.
   val manager = new Manager()
 
   var finished = false
@@ -250,8 +251,8 @@ object Main{
 
     //glDisable(GL_DEPTH_TEST) //This may annoy me in the future.
     //glEnable(GL_LIGHTING)
-    //glEnable(GL_LIGHT0)
-    adjustcam
+    //glEnable(GL_LIGHT0)    
+
     initializeGfx();
     
     manager.add(player)
@@ -263,16 +264,6 @@ object Main{
     System.exit(0)
   }
 
-  def adjustcam(){
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity
-    glOrtho(0, width, height, 0, -.5, .5);
-
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-    glViewport(0, 0, width, height)
-  }
-
   def cleanup(){
     Display.destroy
   }
@@ -282,6 +273,8 @@ object Main{
       Display.update
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      
+      cam.update()
 
       manager.update_all()
       manager.draw_all()

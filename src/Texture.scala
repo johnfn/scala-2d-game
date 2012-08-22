@@ -80,7 +80,7 @@ class Texture(target:Int, textureID:Int) {
      * @return The height of physical texture
      */
     def getHeight():Float = {
-        return heightRatio;
+        return height;
     }
     
     /**
@@ -89,7 +89,7 @@ class Texture(target:Int, textureID:Int) {
      * @return The width of physical texture
      */
     def getWidth():Float = {
-        return widthRatio;
+        return width;
     }
     
     /**

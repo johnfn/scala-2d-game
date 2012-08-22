@@ -69,23 +69,21 @@ class TextureLoader {
      * Load a texture
      *
      * @param resourceName The location of the resource to load
+     * @param x
+     * @param y
+     * @param width
+     * @param height If x, y, width and height are -1, then take the entire image. Otherwise, take a subimage. 
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    def getTexture(resourceName:String):Texture = {
+    def getTexture(resourceName:String, x:Int = -1, y:Int = -1, width:Int = -1, height:Int = -1):Texture = {
       table.get(resourceName) match {
-        case Some(texture) => {
-          return texture;
-        }        
+        case Some(texture) => return texture;        
+        
         case None => {
-	        val tex = getTexture(resourceName,
-	                         GL11.GL_TEXTURE_2D, // target
-	                         GL11.GL_RGBA,     // dst pixel format
-	                         GL11.GL_LINEAR, // min filter (unused)
-	                         GL11.GL_LINEAR);
+	        val tex = loadTexture(resourceName, x, y, width, height);
 	        
 	        table(resourceName) = tex;
-	        
 	        return tex;
         }
 
@@ -104,25 +102,26 @@ class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    def getTexture(resourceName:String , target:Int, dstPixelFormat:Int, minFilter:Int, magFilter:Int):Texture = { 
+    private def loadTexture(resourceName:String, x:Int, y:Int, width:Int, height:Int):Texture = { 
         var srcPixelFormat:Int = 0;
         
         // create the texture ID for this texture 
 
         var textureID:Int = createTextureID(); 
-        var texture:Texture = new Texture(target, textureID); 
+        var texture:Texture = new Texture(GL11.GL_TEXTURE_2D, textureID); 
         
         // bind this texture 
 
-        GL11.glBindTexture(target, textureID); 
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); 
  
         var bufferedImage:BufferedImage = loadImage(resourceName); 
+        
+        if (x != -1) {
+          bufferedImage = bufferedImage.getSubimage(x, y, width, height);
+        }
+        
         texture.setWidth(bufferedImage.getWidth());
         texture.setHeight(bufferedImage.getHeight());
-        
-        println(bufferedImage.getWidth());
-        println(bufferedImage.getHeight());
-        println(bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null, 0, bufferedImage.getWidth())(0));
         
         if (bufferedImage.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;
@@ -134,17 +133,14 @@ class TextureLoader {
 
         var textureBuffer:ByteBuffer = convertImageData(bufferedImage,texture); 
         
-        if (target == GL11.GL_TEXTURE_2D) 
-        { 
-            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter); 
-            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter); 
-        } 
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR); 
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR); 
  
         // produce a texture from the byte buffer
 
-        GL11.glTexImage2D(target, 
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 
                       0, 
-                      dstPixelFormat, 
+                      GL11.GL_RGBA, 
                       get2Fold(bufferedImage.getWidth()), 
                       get2Fold(bufferedImage.getHeight()), 
                       0, 

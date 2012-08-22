@@ -12,11 +12,14 @@ object Main{
   val width = 640
   val height = 480
   
+  initDisplay(); // This needs to come first for any texture or graphical things to work.
+  
   var texLoader:TextureLoader = new TextureLoader();
 
   val player = new Player(100, 100, 20, 20)
   var cam:Camera = new Camera(0, 0, width, height);
-  var map:Map = null; // needs to be initialized after window is created.
+  var map:Map = null; // needs to be initialized after window is created. can't load textures until that point.
+  val ss:Spritesheet = new Spritesheet("assets/derp.png", 20, texLoader);
   val manager = new Manager()
 
   var finished = false
@@ -119,16 +122,28 @@ object Main{
     override def render = {
       glColor3f(0.0f, 1.0f, 1.0f)
       glEnable(GL_TEXTURE_2D);
-      texture.bind();
+      //texture.bind();
+      
+      ss.bind(1, 1);
       
       glBegin(GL_QUADS)
+      /*
   	      glTexCoord2f(0, 0);
 	      glVertex2f(0, 0);
-	      glTexCoord2f(0, texture.getHeight());
+	      glTexCoord2f(0, texture.getWidth());
 	      glVertex2f(0, height);
-	      glTexCoord2f(texture.getWidth(), texture.getHeight());
+	      glTexCoord2f(texture.getWidth(), texture.getWidth());
 	      glVertex2f(width,height);
 	      glTexCoord2f(texture.getWidth(), 0);
+	      glVertex2f(width,0);
+	      */
+  	      glTexCoord2f(0, 0);
+	      glVertex2f(0, 0);
+	      glTexCoord2f(0, ss.tileSize);
+	      glVertex2f(0, height);
+	      glTexCoord2f(ss.tileSize, ss.tileSize);
+	      glVertex2f(width,height);
+	      glTexCoord2f(ss.tileSize, 0);
 	      glVertex2f(width,0);
       glEnd()
     }
@@ -241,14 +256,16 @@ object Main{
     run()
     gameOver()
   }
-
-  def init(fullscreen:Boolean){
+  
+  def initDisplay() = {
     Display.setTitle(GAME_TITLE)
-    Display.setFullscreen(fullscreen)
+    Display.setFullscreen(false)
     Display.setVSyncEnabled(true)
     Display.setDisplayMode(new DisplayMode(width,height))
-    Display.create
+    Display.create()
+  }
 
+  def init(fullscreen:Boolean){
     //glDisable(GL_DEPTH_TEST) //This may annoy me in the future.
     //glEnable(GL_LIGHTING)
     //glEnable(GL_LIGHT0)    

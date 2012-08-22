@@ -22,6 +22,8 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
+import de.matthiasmann.twl.utils.PNGDecoder;
+
 class TextureLoader {
 	import scala.collection.mutable.Map;
 	
@@ -68,9 +70,24 @@ class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    def getTexture(resourceName:String, x:Int = -1, y:Int = -1, width:Int = -1, height:Int = -1):Texture = {
-        return loadTexture(resourceName, x, y, width, height);
+    def getTexture(resourceName:String):Texture = {
+        return loadTexture(resourceName);
     }
+    
+    /*private def stuff() = {
+      import java.io.{FileInputStream, InputStream};
+      
+		val in:InputStream = new FileInputStream("white_pixel.png");
+		val decoder:PNGDecoder = new PNGDecoder(in);
+		
+		System.out.println("width="+decoder.getWidth());
+		System.out.println("height="+decoder.getHeight());
+		
+		val buf:ByteBuffer = ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
+		decoder.decode(buf, decoder.getWidth()*4, PNGDecoder.Format.RGBA);
+		buf.flip();
+	
+    }*/
     
     /**
      * Load a texture into OpenGL from a image reference on
@@ -84,7 +101,7 @@ class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    private def loadTexture(resourceName:String, x:Int, y:Int, width:Int, height:Int):Texture = { 
+    private def loadTexture(resourceName:String):Texture = { 
         var srcPixelFormat:Int = 0;
         
         // create the texture ID for this texture 
@@ -98,10 +115,6 @@ class TextureLoader {
  
         var bufferedImage:BufferedImage = loadImage(resourceName); 
         
-        if (x != -1) {
-          bufferedImage = bufferedImage.getSubimage(x, y, width, height);
-        }
-        
         texture.setWidth(bufferedImage.getWidth());
         texture.setHeight(bufferedImage.getHeight());
         
@@ -113,7 +126,7 @@ class TextureLoader {
 
         // convert that image into a byte buffer of texture data 
 
-        var textureBuffer:ByteBuffer = convertImageData(bufferedImage,texture); 
+        var textureBuffer:ByteBuffer = convertImageData(bufferedImage, texture); 
         
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR); 
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR); 

@@ -123,18 +123,7 @@ object Main{
     override def render = {
       glColor3f(1.0f, 1.0f, 1.0f)
       
-      ss.bind(1, 0);
-      
-      glBegin(GL_QUADS)
-  	      glTexCoord2f(0, 0);
-	      glVertex2f(0, 0);
-	      glTexCoord2f(0, texture.getWidth());
-	      glVertex2f(0, height);
-	      glTexCoord2f(texture.getWidth(), texture.getWidth());
-	      glVertex2f(width,height);
-	      glTexCoord2f(texture.getWidth(), 0);
-	      glVertex2f(width,0);
-      glEnd()
+      ss.render(1, 0);
     }
 
     def isWall:Boolean = t == 0

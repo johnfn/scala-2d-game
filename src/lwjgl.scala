@@ -280,6 +280,7 @@ object Main{
     while(!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
       Display.update
 
+      //glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       
       cam.update()

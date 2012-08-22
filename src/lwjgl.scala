@@ -12,8 +12,8 @@ object Main{
   val width = 640
   val height = 480
 
-  val player = new Player(100, 100, 16, 16)
-  val map = new Map(0, 0, 20, 20)
+  val player = new Player(100, 100, 20, 20)
+  val map = new Map(0, 0, width / 20, height / 20)
   val manager = new Manager()
 
   var finished = false
@@ -129,13 +129,13 @@ object Main{
   class Map(x:Int, y:Int, width:Int, height:Int) extends Entity(x, y, width, height) {
     traits = List("update", "draw", "map")
     var data:Array[Array[Int]] = Array.ofDim[Int](width.toInt, height.toInt).zipWithIndex.map {case (elem, i) => elem.map((e) => 1)}
-    for (j <- 0 until width.toInt) {
-      data(j)(15) = 0
+    for (j <- 0 until 5) {
+      data(j)(height - 1) = 0
     }
 
     data(12)(14) = 0
 
-    var tiles:Array[Tile] = data.zipWithIndex.map{ case (line, i) => line.zipWithIndex.map{ case (elem, j) => new Tile(i * 16, j * 16, 16, 16, elem)}}.reduce(_ ++ _)
+    var tiles:Array[Tile] = data.zipWithIndex.map{ case (line, i) => line.zipWithIndex.map{ case (elem, j) => new Tile(i * 20, j * 20, 20, 20, elem)}}.reduce(_ ++ _)
 
     override def draw = {
       tiles.map(e => e.draw)
@@ -250,7 +250,7 @@ object Main{
   def adjustcam(){
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity
-    glOrtho(0, width, height, 0, -1, 1);
+    glOrtho(0, width, height, 0, -.5, .5);
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()

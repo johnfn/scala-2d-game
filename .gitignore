@@ -1,2 +1,6 @@
 *.class
+.cache
+.classpath
+.project
+.settings/org.eclipse.jdt.core.prefs
 .DS_store

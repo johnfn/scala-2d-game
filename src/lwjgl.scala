@@ -20,6 +20,7 @@ object Main{
   var cam:Camera = new Camera(0, 0, width, height);
   var map:Map = null; // needs to be initialized after window is created. can't load textures until that point.
   val ss:Spritesheet = new Spritesheet("assets/derp.png", 20, texLoader);
+  val t:Text = new Text();
   val manager = new Manager()
 
   var finished = false
@@ -287,6 +288,8 @@ object Main{
       manager.draw_all()
 
       Display.sync(FRAMERATE)
+      
+      t.render();
     }
   }
 }

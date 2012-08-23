@@ -9,6 +9,7 @@ import scala.util.control.Breaks._
 //TODO: FPS Counter
 //TODO: FPS Limiter
 //TODO: Decent camera following.
+//TODO: Transparency??? O_O...
 
 object Main {
   val GAME_TITLE = "My Game"
@@ -16,17 +17,19 @@ object Main {
   val MAP_WIDTH: Int = 40;
   val MAP_HEIGHT: Int = 40;
 
-  val width = 640
+  val width = 440
   val height = 480
+  
+  val TILE_SIZE:Int = 25;
 
   initDisplay(); // This needs to come first for any texture or graphical things to work.
 
   var texLoader: TextureLoader = new TextureLoader();
 
-  val player = new Player(100, 100, 20, 20)
+  val player = new Player(100, 100, TILE_SIZE, TILE_SIZE)
   var cam: Camera = new Camera(0, 0, width, height);
-  val ss: Spritesheet = new Spritesheet("assets/derp.png", 20, texLoader);
-  var map: Map = new Map(0, 0, MAP_WIDTH, MAP_HEIGHT, ss);
+  val ss: Spritesheet = new Spritesheet("assets/derp.png", TILE_SIZE, texLoader);
+  var map: Map = new Map(0, 0, MAP_WIDTH, MAP_HEIGHT, ss, TILE_SIZE);
   val t: Text = new Text();
   val manager = new Manager()
 

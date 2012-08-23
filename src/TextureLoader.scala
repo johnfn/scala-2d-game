@@ -102,8 +102,15 @@ class TextureLoader {
      * @throws IOException Indicates a failure to access the resource
      */
     private def loadTexture(resourceName:String):Texture = { 
-        var srcPixelFormat:Int = 0;
-        
+        import java.io.{FileInputStream, InputStream};
+      
+		val in:InputStream = new FileInputStream(resourceName);
+		val decoder:PNGDecoder = new PNGDecoder(in);
+		
+		val textureBuffer:ByteBuffer = ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
+		decoder.decode(textureBuffer, decoder.getWidth()*4, PNGDecoder.Format.RGBA);
+		textureBuffer.flip();
+		
         // create the texture ID for this texture 
 
         var textureID:Int = createTextureID(); 
@@ -113,37 +120,19 @@ class TextureLoader {
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); 
  
-        var bufferedImage:BufferedImage = loadImage(resourceName); 
+        texture.setWidth(decoder.getWidth());
+        texture.setHeight(decoder.getHeight());
         
-        texture.setWidth(bufferedImage.getWidth());
-        texture.setHeight(bufferedImage.getHeight());
-        
-        if (bufferedImage.getColorModel().hasAlpha()) {
-            srcPixelFormat = GL11.GL_RGBA;
-        } else {
-            srcPixelFormat = GL11.GL_RGB;
-        }
-
         // convert that image into a byte buffer of texture data 
 
-        var textureBuffer:ByteBuffer = convertImageData(bufferedImage, texture); 
-        
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR); 
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR); 
  
         // produce a texture from the byte buffer
 
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 
-                      0, 
-                      GL11.GL_RGBA, 
-                      get2Fold(bufferedImage.getWidth()), 
-                      get2Fold(bufferedImage.getHeight()), 
-                      0, 
-                      srcPixelFormat, 
-                      GL11.GL_UNSIGNED_BYTE, 
-                      textureBuffer ); 
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, decoder.getWidth(), decoder.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, textureBuffer);
         
-        return texture; 
+        return texture;
     } 
     
     /**

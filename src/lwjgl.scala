@@ -116,8 +116,6 @@ object Main{
   }
 
   class Tile(x:Int, y:Int, width:Int, height:Int, t:Int) extends Entity(x, y, width, height) {
-    val texture:Texture = texLoader.getTexture("/Users/grantm/eclipse/scala-game/assets/derp.png");
-    
     override def update(m:Manager) = {}
 
     override def render = {

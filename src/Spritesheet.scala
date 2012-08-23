@@ -9,11 +9,11 @@ class Spritesheet(file:String, val tileSize:Int, texLoader:TextureLoader) {
   def render(srcX:Int, srcY:Int) {
     import org.lwjgl.opengl.GL11._;
     
-    val topRightX = (srcX.asInstanceOf[Float] / widthInTiles) * tex.getWidth();
-    val topRightY = (srcY.asInstanceOf[Float] / heightInTiles) * tex.getHeight();
+    val topRightX = (srcX.asInstanceOf[Float] / widthInTiles);
+    val topRightY = (srcY.asInstanceOf[Float] / heightInTiles);
     
-    val bottomLeftX = ((srcX.asInstanceOf[Float] + 1) / widthInTiles) * tex.getWidth();
-    val bottomLeftY = ((srcY.asInstanceOf[Float] + 1) / heightInTiles) * tex.getHeight();
+    val bottomLeftX = ((srcX.asInstanceOf[Float] + 1) / widthInTiles);
+    val bottomLeftY = ((srcY.asInstanceOf[Float] + 1) / heightInTiles);
     
     tex.bind();
     

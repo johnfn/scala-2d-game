@@ -9,6 +9,9 @@ import scala.util.control.Breaks._
 object Main{
   val GAME_TITLE = "My Game"
   val FRAMERATE = 60
+  val MAP_WIDTH:Int = 40;
+  val MAP_HEIGHT:Int = 40;
+  
   val width = 640
   val height = 480
   
@@ -18,16 +21,12 @@ object Main{
 
   val player = new Player(100, 100, 20, 20)
   var cam:Camera = new Camera(0, 0, width, height);
-  var map:Map = null; // needs to be initialized after window is created. can't load textures until that point.
   val ss:Spritesheet = new Spritesheet("assets/derp.png", 20, texLoader);
+  var map:Map = new Map(0, 0, MAP_WIDTH, MAP_HEIGHT, ss);
   val t:Text = new Text();
   val manager = new Manager()
 
   var finished = false
-  
-  def initializeMap() = {
-	  map = new Map(0, 0, width / 20, height / 20)
-  }
 
   trait controllable extends Entity{
     def control() = {
@@ -49,126 +48,6 @@ object Main{
   class Point(val x: Int, val y: Int) {
     override def toString() = {
       "Point (x : " + x + ", y : " + y + ")"
-    }
-  }
-
-  class Manager() {
-    var entities:List[Entity] = List()
-
-    def get(entity_type:String):List[Entity] = {
-      entities.filter(e => e.traits.contains(entity_type))
-    }
-
-    def one(entity_type:String):Entity = {
-      val list:List[Entity] = get(entity_type)
-      assert(list.length == 1)
-
-      list(0)
-    }
-
-    def add(entity:Entity):Unit = {
-      entities = entities :+ entity
-    }
-
-    def update_all():Unit = {
-      get("update").map(_.update(this))
-    }
-
-    def draw_all():Unit = {
-      get("draw").sortBy(_.depth).foreach(_.draw)
-    }
-  }
-
-  abstract class Entity(var x:Int, var y:Int, var width:Int, var height:Int) {
-    var vx:Int = 0
-    var vy:Int = 0
-    var traits:List[String] = List("update", "draw")
-
-    def touchesPoint(p:Point):Boolean = {
-      x <= p.x && p.x <= x + width && y <= p.y && p.y <= y + height
-    }
-
-    def touchesEntity(other:Entity):Boolean = {
-       ( touchesPoint(new Point(other.x, other.y))
-      || touchesPoint(new Point(other.x, other.y + other.height))
-      || touchesPoint(new Point(other.x + other.width, other.y))
-      || touchesPoint(new Point(other.x + other.width, other.y + other.height)))
-    }
-
-    def render;
-    def update(m:Manager);
-    def depth:Int;
-
-    /* Overridden in stuff like Map to be more accurate */
-    def collidesWith(other:Entity):Boolean = {
-      assert(other.width == width)
-      assert(other.height == height)
-
-      touchesEntity(other)
-    }
-
-    def draw = {
-      glPushMatrix()
-      glTranslatef(x, y, 0)
-      render
-      glPopMatrix()
-    }
-  }
-
-  class Tile(x:Int, y:Int, width:Int, height:Int, t:Int) extends Entity(x, y, width, height) {
-    override def update(m:Manager) = {}
-
-    override def render = {
-      glColor3f(1.0f, 1.0f, 1.0f)
-      
-      t match {
-        case 0 => ss.render(1, 0);
-        case 1 => ss.render(0, 0);
-        case _ => throw new Error("No value for Tile.");
-      }
-    }
-
-    def isWall:Boolean = t == 0
-
-    override def depth:Int = 5;
-
-    override def collidesWith(other:Entity):Boolean = {
-      isWall && touchesEntity(other)
-    }
-  }
-  
-
-  def toRGBTuple(num:Int):(Int, Int, Int) = {
-    val colorStr:String = num.toString();
-    return (java.awt.Color.decode(colorStr).getRed(), java.awt.Color.decode(colorStr).getRed(), java.awt.Color.decode(colorStr).getRed());
-  }
-
-  class Map(x:Int, y:Int, width:Int, height:Int) extends Entity(x, y, width, height) {
-	import java.awt.image.BufferedImage;
-	import javax.imageio.ImageIO;
-	import java.io.File;
-
-    traits = List("update", "draw", "map")
-
-	val data:BufferedImage = ImageIO.read(new File("assets/map.png"));
-    
-    var t:Array[Array[Tile]] = Array.tabulate(20, 20)((x, y) => toRGBTuple(data.getRGB(x, y)) match {
-      case (0, 0, 0) => new Tile(x * 20, y * 20, 20, 20, 0);
-      case (255, 255, 255) => new Tile(x * 20, y * 20, 20, 20, 1);
-      case _ => throw new Error("aderp!");
-    })
-
-    override def draw = {
-      t.flatten.map(e => e.draw)
-    }
-
-    override def render() = {}
-    override def update(m:Manager) = {}
-    override def depth:Int = 5;
-
-    override def collidesWith(e:Entity):Boolean = t.flatten.count(_.collidesWith(e)) > 0
-    override def touchesPoint(p:Point):Boolean = {
-      t.flatten.count((t) => t.touchesPoint(p) && t.isWall) > 0
     }
   }
 
@@ -199,7 +78,7 @@ object Main{
 
     def onGround(m:Manager):Boolean = {
       val gameMap = manager.one("map")
-      (x to (x + width)).map(new Point(_, y + height + 3)).map(gameMap.touchesPoint(_)).reduce(_ || _)
+      (x to (x + width)).map((_, y + height + 3)).map(gameMap.touchesPoint(_)).reduce(_ || _)
     }
 
     def update(m:Manager) = {
@@ -235,7 +114,7 @@ object Main{
 
   def main(args:Array[String]){
     var fullscreen = false
-    for(arg <- args){
+    for(arg <- args) {
       arg match{
         case "-fullscreen" =>
           fullscreen = true
@@ -262,8 +141,6 @@ object Main{
     //glEnable(GL_LIGHTING)
     //glEnable(GL_LIGHT0)    
 
-    initializeMap();
-    
     manager.add(player)
     manager.add(map)
   }

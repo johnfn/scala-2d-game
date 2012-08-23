@@ -163,20 +163,21 @@ object Main {
 
   def run() {
     while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
-      Display.update()
 
       //glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      cam.move(player.x - cam.width / 2, player.y - cam.height / 2);
-      cam.update()
-
       manager.update_all()
       manager.draw_all()
 
-      Display.sync(FRAMERATE)
-
       t.render();
+      
+      cam.move(player.x - cam.width / 2, player.y - cam.height / 2);
+      cam.update()
+
+      Display.update()
+      
+      Display.sync(FRAMERATE)
     }
   }
 }

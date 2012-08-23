@@ -74,30 +74,11 @@ class TextureLoader {
         return loadTexture(resourceName);
     }
     
-    /*private def stuff() = {
-      import java.io.{FileInputStream, InputStream};
-      
-		val in:InputStream = new FileInputStream("white_pixel.png");
-		val decoder:PNGDecoder = new PNGDecoder(in);
-		
-		System.out.println("width="+decoder.getWidth());
-		System.out.println("height="+decoder.getHeight());
-		
-		val buf:ByteBuffer = ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
-		decoder.decode(buf, decoder.getWidth()*4, PNGDecoder.Format.RGBA);
-		buf.flip();
-	
-    }*/
-    
     /**
      * Load a texture into OpenGL from a image reference on
      * disk.
      *
      * @param resourceName The location of the resource to load
-     * @param target The GL target to load the texture against
-     * @param dstPixelFormat The pixel format of the screen
-     * @param minFilter The minimising filter
-     * @param magFilter The magnification filter
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */

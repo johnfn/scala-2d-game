@@ -20,7 +20,7 @@ object Main {
   val width = 440
   val height = 480
   
-  val TILE_SIZE:Int = 25;
+  val TILE_SIZE:Int = 20;
 
   initDisplay(); // This needs to come first for any texture or graphical things to work.
 

@@ -1,49 +1,53 @@
 import org.lwjgl._
-import opengl.{Display,GL11,DisplayMode}
+import opengl.{ Display, GL11, DisplayMode }
 import GL11._
 import input._
 import math._
 import Keyboard._
 import scala.util.control.Breaks._
 
-object Main{
+//TODO: FPS Counter
+//TODO: FPS Limiter
+//TODO: Decent camera following.
+
+object Main {
   val GAME_TITLE = "My Game"
   val FRAMERATE = 60
-  val MAP_WIDTH:Int = 40;
-  val MAP_HEIGHT:Int = 40;
-  
+  val MAP_WIDTH: Int = 40;
+  val MAP_HEIGHT: Int = 40;
+
   val width = 640
   val height = 480
-  
+
   initDisplay(); // This needs to come first for any texture or graphical things to work.
-  
-  var texLoader:TextureLoader = new TextureLoader();
+
+  var texLoader: TextureLoader = new TextureLoader();
 
   val player = new Player(100, 100, 20, 20)
-  var cam:Camera = new Camera(0, 0, width, height);
-  val ss:Spritesheet = new Spritesheet("assets/derp.png", 20, texLoader);
-  var map:Map = new Map(0, 0, MAP_WIDTH, MAP_HEIGHT, ss);
-  val t:Text = new Text();
+  var cam: Camera = new Camera(0, 0, width, height);
+  val ss: Spritesheet = new Spritesheet("assets/derp.png", 20, texLoader);
+  var map: Map = new Map(0, 0, MAP_WIDTH, MAP_HEIGHT, ss);
+  val t: Text = new Text();
   val manager = new Manager()
 
   var finished = false
 
-  trait controllable extends Entity{
+  trait controllable extends Entity {
     def control() = {
       var rx = 0
       var ry = 0
 
-      if(isKeyDown(KEY_I)) ry += 1
-      if(isKeyDown(KEY_K)) ry -= 1
-      if(isKeyDown(KEY_J)) rx -= 1
-      if(isKeyDown(KEY_L)) rx += 1
+      if (isKeyDown(KEY_I)) ry += 1
+      if (isKeyDown(KEY_K)) ry -= 1
+      if (isKeyDown(KEY_J)) rx -= 1
+      if (isKeyDown(KEY_L)) rx += 1
 
     }
   }
 
   // I'll probably never use these  >_> <_< <_>
-  def any(l:List[Boolean]) = l contains true
-  def all(l:List[Boolean]) = !(l contains false)
+  def any(l: List[Boolean]) = l contains true
+  def all(l: List[Boolean]) = !(l contains false)
 
   class Point(val x: Int, val y: Int) {
     override def toString() = {
@@ -51,7 +55,7 @@ object Main{
     }
   }
 
-  def sign(num:Int):Int = {
+  def sign(num: Int): Int = {
     if (num > 0) {
       1
     } else if (num < 0) {
@@ -61,10 +65,10 @@ object Main{
     }
   }
 
-  class Player(_x:Int, _y:Int, width:Int, height:Int) extends Entity(_x, _y, width, height){
+  class Player(_x: Int, _y: Int, width: Int, height: Int) extends Entity(_x, _y, width, height) {
     val speed = 5
     def render = {
-      glColor3f(1.0f,1.0f,1.0f)
+      glColor3f(1.0f, 1.0f, 1.0f)
 
       glBegin(GL_QUADS)
       glVertex2f(0, 0)
@@ -74,16 +78,16 @@ object Main{
       glEnd()
     }
 
-    override def depth:Int = 99;
+    override def depth: Int = 99;
 
-    def onGround(m:Manager):Boolean = {
+    def onGround(m: Manager): Boolean = {
       val gameMap = manager.one("map")
       (x to (x + width)).map((_, y + height + 3)).map(gameMap.touchesPoint(_)).reduce(_ || _)
     }
 
-    def update(m:Manager) = {
+    def update(m: Manager) = {
       val map = manager.one("map")
-      var ry = 5
+      var ry = 0
       var rx = 0
 
       if (isKeyDown(KEY_W)) ry -= speed
@@ -112,10 +116,10 @@ object Main{
     }
   }
 
-  def main(args:Array[String]){
+  def main(args: Array[String]) {
     var fullscreen = false
-    for(arg <- args) {
-      arg match{
+    for (arg <- args) {
+      arg match {
         case "-fullscreen" =>
           fullscreen = true
       }
@@ -125,18 +129,18 @@ object Main{
     run()
     gameOver()
   }
-  
+
   def initDisplay() = {
     Display.setTitle(GAME_TITLE)
     Display.setFullscreen(false)
     Display.setVSyncEnabled(true)
-    Display.setDisplayMode(new DisplayMode(width,height))
+    Display.setDisplayMode(new DisplayMode(width, height))
     Display.create()
-    
+
     glEnable(GL_TEXTURE_2D);
   }
 
-  def init(fullscreen:Boolean){
+  def init(fullscreen: Boolean) {
     //glDisable(GL_DEPTH_TEST) //This may annoy me in the future.
     //glEnable(GL_LIGHTING)
     //glEnable(GL_LIGHT0)    
@@ -150,24 +154,25 @@ object Main{
     System.exit(0)
   }
 
-  def cleanup(){
-    Display.destroy
+  def cleanup() {
+    Display.destroy()
   }
 
-  def run(){
-    while(!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
-      Display.update
+  def run() {
+    while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
+      Display.update()
 
       //glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      
+
+      cam.move(player.x - cam.width / 2, player.y - cam.height / 2);
       cam.update()
 
       manager.update_all()
       manager.draw_all()
 
       Display.sync(FRAMERATE)
-      
+
       t.render();
     }
   }

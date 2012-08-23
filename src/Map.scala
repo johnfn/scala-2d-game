@@ -1,4 +1,4 @@
-class Map(x: Int, y: Int, widthInTiles: Int, heightInTiles: Int, ss: Spritesheet, tileSize:Int) extends Entity(x, y, widthInTiles, heightInTiles) {
+class Map(x: Int, y: Int, widthInTiles: Int, heightInTiles: Int, ss: Spritesheet, tileSize: Int) extends Entity(x, y, widthInTiles, heightInTiles) {
   import java.awt.image.BufferedImage;
   import javax.imageio.ImageIO;
   import java.io.File;
@@ -11,8 +11,6 @@ class Map(x: Int, y: Int, widthInTiles: Int, heightInTiles: Int, ss: Spritesheet
     val colorStr: String = num.toString();
     return (java.awt.Color.decode(colorStr).getRed(), java.awt.Color.decode(colorStr).getRed(), java.awt.Color.decode(colorStr).getRed());
   }
-  
-  println(widthInTiles, heightInTiles);
 
   var t: Array[Array[Tile]] = Array.tabulate(widthInTiles, heightInTiles)((x, y) => toRGBTuple(data.getRGB(x, y)) match {
     case (0, 0, 0)       => new Tile(x * tileSize, y * tileSize, tileSize, tileSize, 0, ss);
@@ -32,6 +30,10 @@ class Map(x: Int, y: Int, widthInTiles: Int, heightInTiles: Int, ss: Spritesheet
   override def touchesPoint(p: (Int, Int)): Boolean = {
     t.flatten.count((t) => t.touchesPoint(p) && t.isWall) > 0
   }
+
+  width = widthInTiles * tileSize;
+  height = heightInTiles * tileSize;
+  
 }
 
 //TODO: Tile should be taking in RGB values, not Map.

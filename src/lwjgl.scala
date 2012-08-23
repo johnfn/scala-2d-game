@@ -162,6 +162,8 @@ object Main {
   }
 
   def run() {
+    cam.setBounds(0, 0, map.width, map.width);
+    
     while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
 
       //glClearColor(1.0f, 0.0f, 1.0f, 1.0f);

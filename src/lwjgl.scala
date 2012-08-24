@@ -71,14 +71,7 @@ object Main {
   class Player(_x: Int, _y: Int, width: Int, height: Int) extends Entity(_x, _y, width, height) {
     val speed = 5
     def render = {
-      glColor3f(1.0f, 1.0f, 1.0f)
-
-      glBegin(GL_QUADS)
-      glVertex2f(0, 0)
-      glVertex2f(0, height)
-      glVertex2f(width, height)
-      glVertex2f(width, 0)
-      glEnd()
+      ss.render(0, 0);
     }
 
     override def depth: Int = 99;
@@ -141,6 +134,9 @@ object Main {
     Display.create()
 
     glEnable(GL_TEXTURE_2D);
+    
+    glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
   def init(fullscreen: Boolean) {
@@ -166,7 +162,7 @@ object Main {
     
     while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
 
-      //glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+      glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       manager.update_all()

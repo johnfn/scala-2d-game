@@ -28,10 +28,9 @@ object Main {
   var cam: Camera = new Camera(0, 0, width, height);
   val ss: Spritesheet = new Spritesheet("assets/derp.png", TILE_SIZE, texLoader);
   var map: Map = new Map(0, 0, MAP_WIDTH, MAP_HEIGHT, ss, TILE_SIZE);
-  val t: Text = new Text();
   val manager = new Manager()
 
-  var finished = false
+  var finished = false;
 
   def sign(num: Int): Int = {
     if (num > 0) {
@@ -101,17 +100,15 @@ object Main {
     Display.setVSyncEnabled(true)
     Display.setDisplayMode(new DisplayMode(width, height))
     Display.create()
-
-    glEnable(GL_TEXTURE_2D);
   }
 
-  def getTime():Long = {
+  def getTime(): Long = {
     System.nanoTime();
   }
 
-  var lastTime:Long = getTime();
-  var tix:Long = 0;
-  
+  var lastTime: Long = getTime();
+  var tix: Long = 0;
+
   def getFPS() = {
     if (getTime() - lastTime > 1000000000) {
       println(tix);
@@ -139,7 +136,10 @@ object Main {
 
   def run() {
     cam.setBounds(0, 0, map.width, map.width);
+    val t: Text = new Text("FPS", 0, 0);
 
+    glEnable(GL_TEXTURE_2D);
+    
     while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
       getFPS();
 
@@ -152,7 +152,9 @@ object Main {
       manager.update_all()
       manager.draw_all()
 
-      t.render();
+      //t.render();
+      
+      glDisable(GL_BLEND);
 
       cam.move(player.x - cam.width / 2, player.y - cam.height / 2);
       cam.update()

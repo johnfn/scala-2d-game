@@ -35,6 +35,11 @@ abstract class Entity(var x:Int, var y:Int, var width:Int, var height:Int) {
 
       touchesEntity(other)
     }
+    
+    def move(x: Int, y: Int) = {
+      this.x = x;
+      this.y = y;
+    }
 
     def draw = {
       glPushMatrix()

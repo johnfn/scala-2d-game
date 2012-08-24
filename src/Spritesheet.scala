@@ -9,23 +9,23 @@ class Spritesheet(file:String, val tileSize:Int, texLoader:TextureLoader) {
   def render(srcX:Int, srcY:Int) {
     import org.lwjgl.opengl.GL11._;
     
-    val topRightX = (srcX.asInstanceOf[Float] / widthInTiles);
-    val topRightY = (srcY.asInstanceOf[Float] / heightInTiles);
+    val topRightX = tex.getWidth() * (srcX.asInstanceOf[Float] / widthInTiles);
+    val topRightY = tex.getHeight() * (srcY.asInstanceOf[Float] / heightInTiles);
     
-    val bottomLeftX = ((srcX.asInstanceOf[Float] + 1) / widthInTiles);
-    val bottomLeftY = ((srcY.asInstanceOf[Float] + 1) / heightInTiles);
+    val bottomLeftX = tex.getWidth() * ((srcX.asInstanceOf[Float] + 1) / widthInTiles);
+    val bottomLeftY = tex.getHeight() * ((srcY.asInstanceOf[Float] + 1) / heightInTiles);
     
     tex.bind();
     
     glBegin(GL_QUADS)
   	    glTexCoord2f(topRightX, topRightY);
-	    glVertex2f(0, 0);
+	    glVertex3f(0, 0, 0);
 	    glTexCoord2f(topRightX, bottomLeftY);
-	    glVertex2f(0, tileSize);
+	    glVertex3f(0, tileSize, 0);
 	    glTexCoord2f(bottomLeftX, bottomLeftY);
-	    glVertex2f(tileSize, tileSize);
+	    glVertex3f(tileSize, tileSize, 0);
 	    glTexCoord2f(bottomLeftX, topRightY);
-	    glVertex2f(tileSize, 0);
+	    glVertex3f(tileSize, 0, 0);
     glEnd()
  
   }

@@ -19,8 +19,8 @@ object Main {
 
   val width = 440
   val height = 480
-  
-  val TILE_SIZE:Int = 20;
+
+  val TILE_SIZE: Int = 20;
 
   initDisplay(); // This needs to come first for any texture or graphical things to work.
 
@@ -71,6 +71,7 @@ object Main {
   class Player(_x: Int, _y: Int, width: Int, height: Int) extends Entity(_x, _y, width, height) {
     val speed = 5
     def render = {
+      GL11.glTranslated(0, 0, 1.0)
       ss.render(0, 0);
     }
 
@@ -134,9 +135,8 @@ object Main {
     Display.create()
 
     glEnable(GL_TEXTURE_2D);
-    
-    glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
   }
 
   def init(fullscreen: Boolean) {
@@ -159,22 +159,25 @@ object Main {
 
   def run() {
     cam.setBounds(0, 0, map.width, map.width);
-    
+
     while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
 
-      glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+      glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+      
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
       manager.update_all()
       manager.draw_all()
 
       t.render();
-      
+
       cam.move(player.x - cam.width / 2, player.y - cam.height / 2);
       cam.update()
 
       Display.update()
-      
+
       Display.sync(FRAMERATE)
     }
   }

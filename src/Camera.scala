@@ -32,7 +32,7 @@ class Camera(var x: Int, var y: Int, val width: Int, val height: Int) {
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity
-    glOrtho(x, width + x, height + y, y, -.5, .5);
+    glOrtho(x, width + x, height + y, y, -5, 5);
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()

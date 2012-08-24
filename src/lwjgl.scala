@@ -8,8 +8,6 @@ import scala.util.control.Breaks._
 
 //TODO: FPS Counter
 //TODO: FPS Limiter
-//TODO: Decent camera following.
-//TODO: Transparency??? O_O...
 
 object Main {
   val GAME_TITLE = "My Game"
@@ -35,29 +33,6 @@ object Main {
 
   var finished = false
 
-  trait controllable extends Entity {
-    def control() = {
-      var rx = 0
-      var ry = 0
-
-      if (isKeyDown(KEY_I)) ry += 1
-      if (isKeyDown(KEY_K)) ry -= 1
-      if (isKeyDown(KEY_J)) rx -= 1
-      if (isKeyDown(KEY_L)) rx += 1
-
-    }
-  }
-
-  // I'll probably never use these  >_> <_< <_>
-  def any(l: List[Boolean]) = l contains true
-  def all(l: List[Boolean]) = !(l contains false)
-
-  class Point(val x: Int, val y: Int) {
-    override def toString() = {
-      "Point (x : " + x + ", y : " + y + ")"
-    }
-  }
-
   def sign(num: Int): Int = {
     if (num > 0) {
       1
@@ -71,7 +46,6 @@ object Main {
   class Player(_x: Int, _y: Int, width: Int, height: Int) extends Entity(_x, _y, width, height) {
     val speed = 5
     def render = {
-      GL11.glTranslated(0, 0, 1.0)
       ss.render(0, 0);
     }
 
@@ -115,14 +89,8 @@ object Main {
 
   def main(args: Array[String]) {
     var fullscreen = false
-    for (arg <- args) {
-      arg match {
-        case "-fullscreen" =>
-          fullscreen = true
-      }
-    }
 
-    init(fullscreen)
+    init()
     run()
     gameOver()
   }
@@ -135,15 +103,27 @@ object Main {
     Display.create()
 
     glEnable(GL_TEXTURE_2D);
-
-
   }
 
-  def init(fullscreen: Boolean) {
-    //glDisable(GL_DEPTH_TEST) //This may annoy me in the future.
-    //glEnable(GL_LIGHTING)
-    //glEnable(GL_LIGHT0)    
+  def getTime():Long = {
+    System.nanoTime();
+  }
 
+  var lastTime:Long = getTime();
+  var tix:Long = 0;
+  
+  def getFPS() = {
+    if (getTime() - lastTime > 1000000000) {
+      println(tix);
+      tix = 0;
+      lastTime = getTime();
+    } else {
+      tix += 1;
+    }
+  }
+
+  def init() {
+    //glDisable(GL_DEPTH_TEST) //This may annoy me in the future.
     manager.add(player)
     manager.add(map)
   }
@@ -161,13 +141,14 @@ object Main {
     cam.setBounds(0, 0, map.width, map.width);
 
     while (!(isKeyDown(KEY_ESCAPE) || Display.isCloseRequested)) {
+      getFPS();
 
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      
+
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
       manager.update_all()
       manager.draw_all()
 

@@ -2,8 +2,9 @@ class Map(x: Int, y: Int, widthInTiles: Int, heightInTiles: Int, ss: Spritesheet
   import java.awt.image.BufferedImage;
   import javax.imageio.ImageIO;
   import java.io.File;
+  import Trait._;
 
-  traits = List("update", "draw", "map")
+  traits = List(Update, Draw);
 
   val data: BufferedImage = ImageIO.read(new File("assets/map.png"));
 

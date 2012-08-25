@@ -13,7 +13,7 @@ import org.newdawn.slick.font.effects.Effect;
 
 import org.newdawn.slick.util.ResourceLoader;
 
-class Text(var content: String, x: Int, y: Int) {
+class Text(var content: String, x: Int, y: Int) extends Entity(x, y, 0, 0) {
   import java.util.ArrayList;
   
   // This will cause all sorts of crazy problems.
@@ -29,14 +29,19 @@ class Text(var content: String, x: Int, y: Int) {
   
   def setText(t: String) = {
     this.content = t;
+    
+    println(this.content);
   }
+  
+  def update(m:Manager) = {}
+  def depth:Int = 100;
 
   def render() = {
     GL11.glDisable(GL11.GL_TEXTURE_2D);
     GL11.glEnable(GL11.GL_BLEND);
     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-    f.drawString(x, y, "This is a test to see how fonts might look.", Color.white);
+    f.drawString(x, y, content, Color.white);
     GL11.glDisable(GL11.GL_BLEND);
     GL11.glEnable(GL11.GL_TEXTURE_2D);
   }

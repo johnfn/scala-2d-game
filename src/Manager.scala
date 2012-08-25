@@ -1,16 +1,13 @@
-object Traits extends Enumeration {
-  type Traits = Value
-  val Update, Draw, Transparent = Value;
-}
-
 class Manager() {
+  import Trait._;
+
   var entities: List[Entity] = List()
 
-  def get(entity_type: String): List[Entity] = {
+  def get(entity_type: Trait): List[Entity] = {
     entities.filter(e => e.traits.contains(entity_type))
   }
-
-  def one(entity_type: String): Entity = {
+  
+  def one(entity_type: Trait): Entity = {
     val list: List[Entity] = get(entity_type)
     assert(list.length == 1)
 
@@ -22,10 +19,10 @@ class Manager() {
   }
 
   def update_all(): Unit = {
-    get("update").map(_.update(this))
+    get(Update).map(_.update(this))
   }
 
   def draw_all(): Unit = {
-    get("draw").sortBy(_.depth).foreach(_.draw)
+    get(Draw).sortBy(_.depth).foreach(_.draw)
   }
 }
